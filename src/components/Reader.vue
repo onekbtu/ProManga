@@ -45,12 +45,12 @@ export default class HelloWorld extends Vue {
   lhScanSource: string = '';
 
   mounted() {
-    this.getPrimaryImages(
-      'https://api.mangarockhd.com/query/web401/pagesv2?oid=mrs-chapter-241689&country=Kazakhstan',
-    );
-    // await this.getSecondaryImages(
-    //   'https://lhscan.net/read-tensei-shitara-slime-datta-ken-raw-chapter-52.html',
+    // this.getPrimaryImages(
+    //   'https://api.mangarockhd.com/query/web401/pagesv2?oid=mrs-chapter-241689&country=Kazakhstan',
     // );
+    this.getSecondaryImages(
+      'https://lhscan.net/read-tate-no-yuusha-no-nariagari-raw-chapter-52.html',
+    );
   }
 }
 </script>
