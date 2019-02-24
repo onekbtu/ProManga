@@ -1,6 +1,11 @@
 <template>
   <div class="hello">
     <h1>{{ msg }}</h1>
+    <input type="text" placeholder="MangaRock source">
+    <br>
+    <input type="text" placeholder="LHScan source">
+    <br>
+    <input type="submit">
     <ul>
       <li v-for='(url, index) in urls' :value='url' :key='index'>
         <ImageByUrl :url='url'></ImageByUrl>
@@ -25,6 +30,10 @@ export default class HelloWorld extends Vue {
   @Action('MRIsByURL') MRIsByURL;
 
   @State('urls') urls;
+
+  mangaRockSource: string = '';
+
+  lhScanSource: string = '';
 
   mounted() {
     this.MRIsByURL('https://api.mangarockhd.com/query/web401/pagesv2?oid=mrs-chapter-241689&country=Kazakhstan');
