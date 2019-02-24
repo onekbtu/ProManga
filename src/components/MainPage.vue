@@ -11,7 +11,6 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import ImageByUrl from '@/components/ImageByUrl.vue';
-import router from '../router'; // @ is an alias to /src
 
   @Component({
     components: {
@@ -24,7 +23,7 @@ export default class HelloWorld extends Vue {
     lhScanSource: string = '';
 
     readManga() {
-      router.push({
+      this.$router.push({
         name: 'mangaDetails',
         query: {
           primarySource: this.mangaRockSource,
