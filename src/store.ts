@@ -1,27 +1,32 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import api from '@/api';
+import { getImagesFromLHScanByUrl, getImagesFromMangaRockByUrl } from '@/parsers';
 
 Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
-    urls: []
+    primaryImages: [''],
+    secondaryImages: [''],
   },
   mutations: {
-    setUrls(state, urls) {
-      state.urls = urls;
-    }
+    setPrimaryImages(state, images: [string]) {
+      state.primaryImages = images;
+    },
+    setSecondaryImages(state, images: [string]) {
+      state.secondaryImages = images;
+    },
   },
   actions: {
-    MRIsByURL ({ commit }, url: string): void {
-      api.get(api.defaults.baseURL + url).then(response => {
-        if (response.status === 200) {
-          const urls: [string] = response.data.data.map((value: any) => value['url']);
-          console.log(urls);
-          commit('setUrls', urls);
-        }
-      })
-    }
+    getPrimaryImages({ commit }, url: string): void {
+      getImagesFromMangaRockByUrl(url).then((images: [string]) => {
+        commit('setPrimaryImages', images);
+      });
+    },
+    getSecondaryImages({ commit }, url: string): void {
+      getImagesFromLHScanByUrl(url).then((images: [string]) => {
+        commit('setSecondaryImages', images);
+      });
+    },
   },
 });
