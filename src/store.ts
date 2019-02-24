@@ -15,9 +15,10 @@ export default new Vuex.Store({
   },
   actions: {
     MRIsByURL ({ commit }, url: string): void {
-      api.get(url).then(response => {
+      api.get(api.defaults.baseURL + url).then(response => {
         if (response.status === 200) {
-          const urls = response.data.data.map(value => value['url']);
+          const urls: [string] = response.data.data.map((value: any) => value['url']);
+          console.log(urls);
           commit('setUrls', urls);
         }
       })
