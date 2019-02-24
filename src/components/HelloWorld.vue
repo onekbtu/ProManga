@@ -2,7 +2,12 @@
   <div class="hello">
     <h1>{{ msg }}</h1>
     <ul>
-      <li v-for='(url, index) in urls' :value='url' :key='index'>
+      <li v-for='(url, index) in primaryImages' :value='url' :key='index'>
+        <ImageByUrl :url='url'></ImageByUrl>
+      </li>
+    </ul>
+    <ul>
+      <li v-for='(url, index) in secondaryImages' :value='url' :key='index'>
         <ImageByUrl :url='url'></ImageByUrl>
       </li>
     </ul>
@@ -12,7 +17,7 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
-import ImageByUrl from '@/components/ImageByUrl.vue'; // @ is an alias to /src
+import ImageByUrl from '@/components/ImageByUrl.vue';
 
 @Component({
   components: {
@@ -22,12 +27,21 @@ import ImageByUrl from '@/components/ImageByUrl.vue'; // @ is an alias to /src
 export default class HelloWorld extends Vue {
   @Prop() private msg!: string;
 
-  @Action('MRIsByURL') MRIsByURL;
+  @Action('getPrimaryImages') getPrimaryImages;
 
-  @State('urls') urls;
+  @Action('getSecondaryImages') getSecondaryImages;
+
+  @State('primaryImages') primaryImages: [string];
+
+  @State('secondaryImages') secondaryImages: [string];
 
   mounted() {
-    this.MRIsByURL('https://api.mangarockhd.com/query/web401/pagesv2?oid=mrs-chapter-241689&country=Kazakhstan');
+    this.getPrimaryImages(
+      'https://api.mangarockhd.com/query/web401/pagesv2?oid=mrs-chapter-241689&country=Kazakhstan',
+    );
+    // await this.getSecondaryImages(
+    //   'https://lhscan.net/read-tensei-shitara-slime-datta-ken-raw-chapter-52.html',
+    // );
   }
 }
 </script>
