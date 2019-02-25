@@ -1,10 +1,12 @@
 <template>
   <div class="hello">
-    <input type="text" placeholder="MangaRock source" v-model="mangaRockSource">
-    <br>
-    <input type="text" placeholder="LHScan source" v-model="lhScanSource">
-    <br>
-    <input type="submit" value="Read Manga" @click="readManga">
+    <div class="container">
+        <input type="text" placeholder="MangaRock source" v-model="mangaRockSource">
+        <br>
+        <input type="text" placeholder="LHScan source" v-model="lhScanSource">
+        <br>
+        <input type="submit" value="Read Manga" @click="readManga">
+    </div>
   </div>
 </template>
 

@@ -1,21 +1,31 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <input type="text" placeholder="MangaRock source">
-    <br>
-    <input type="text" placeholder="LHScan source">
-    <br>
-    <input type="submit">
+  <div class="hello"
+  >
     <ul>
-      <li v-for='(url, index) in primaryImages' :value='url' :key='index'>
-        <ImageByUrl :url='url'></ImageByUrl>
+      <li v-for='(url, index) in primaryImages' :value='url' :key='index'
+          v-bind:style="{'display': index===currentImage ? 'block': 'none'}"
+      >
+        <ImageByUrl
+          :url='url'
+        >
+        </ImageByUrl>
       </li>
     </ul>
     <ul>
-      <li v-for='(url, index) in secondaryImages' :value='url' :key='index'>
-        <ImageByUrl :url='url'></ImageByUrl>
+      <li v-for='(url, index) in secondaryImages' :value='url' :key='index'
+          v-bind:style="{'display': index===currentImage ? 'block': 'none'}"
+      >
+        <ImageByUrl
+          :url='url'
+        >
+        </ImageByUrl>
       </li>
     </ul>
+    <div @click="toggleSources" class="fixed-action-btn">
+      <a class="btn-floating btn-large red">
+        <i class="large material-icons">chrome_reader_mode</i>
+      </a>
+    </div>
   </div>
 </template>
 
@@ -30,8 +40,6 @@ import ImageByUrl from '@/components/ImageByUrl.vue';
   },
 })
 export default class HelloWorld extends Vue {
-  @Prop() private msg!: string;
-
   @Action('getPrimaryImages') getPrimaryImages;
 
   @Action('getSecondaryImages') getSecondaryImages;
@@ -44,6 +52,16 @@ export default class HelloWorld extends Vue {
 
   lhScanSource: string = '';
 
+  currentImage: number = 0;
+
+  nextMangaPage() {
+    this.currentImage += 1;
+  }
+
+  toggleSources() {
+    alert('toggled');
+  }
+
   mounted() {
     this.getPrimaryImages(
       'https://api.mangarockhd.com/query/web401/pagesv2?oid=mrs-chapter-241689&country=Kazakhstan',
@@ -51,6 +69,15 @@ export default class HelloWorld extends Vue {
     // await this.getSecondaryImages(
     //   'https://lhscan.net/read-tensei-shitara-slime-datta-ken-raw-chapter-52.html',
     // );
+    window.onkeyup = (e) => {
+      const key = e.keyCode ? e.keyCode : e.which;
+
+      if (key === 37) {
+        this.currentImage -= 1;
+      } else if (key === 39) {
+        this.currentImage += 1;
+      }
+    };
   }
 }
 </script>
@@ -65,10 +92,28 @@ ul {
   padding: 0;
 }
 li {
+  width: 100%;
   display: inline-block;
-  margin: 0 10px;
+  margin: 24px 16px 24px 16px;
 }
 a {
   color: #42b983;
+}
+
+.float{
+  position:fixed;
+  width:60px;
+  height:60px;
+  bottom:40px;
+  right:40px;
+  background-color:#0C9;
+  color:#FFF;
+  border-radius:50px;
+  text-align:center;
+  box-shadow: 2px 2px 3px #999;
+}
+
+.my-float{
+  margin-top:22px;
 }
 </style>

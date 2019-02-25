@@ -8,7 +8,8 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import ImageByUrl from '@/components/ImageByUrl.vue'; // @ is an alias to /src
+import ImageByUrl from '@/components/ImageByUrl.vue';
+import api from '../api'; // @ is an alias to /src
 
   @Component({
     components: {
@@ -23,6 +24,10 @@ export default class MangaDetails extends Vue {
     mounted() {
       this.primarySource = this.$route.query.primarySource;
       this.secondarySource = this.$route.query.secondarySource;
+      this.primarySource = 'https://mangarock.com/manga/mrs-serie-100055928';
+      api.get(this.primarySource).then((response) => {
+        console.log(response);
+      });
     }
 }
 </script>

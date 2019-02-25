@@ -13,6 +13,11 @@ export default new Router({
       component: MainPage,
     },
     {
+      path: '/manga/read',
+      name: 'home',
+      component: Home,
+    },
+    {
       path: '/manga',
       name: 'mangaDetails',
       component: MangaDetails,
