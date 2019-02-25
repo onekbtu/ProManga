@@ -66,9 +66,6 @@ export default class HelloWorld extends Vue {
     this.getPrimaryImages(
       'https://api.mangarockhd.com/query/web401/pagesv2?oid=mrs-chapter-241689&country=Kazakhstan',
     );
-    // await this.getSecondaryImages(
-    //   'https://lhscan.net/read-tensei-shitara-slime-datta-ken-raw-chapter-52.html',
-    // );
     window.onkeyup = (e) => {
       const key = e.keyCode ? e.keyCode : e.which;
 
@@ -78,6 +75,9 @@ export default class HelloWorld extends Vue {
         this.currentImage += 1;
       }
     };
+    this.getSecondaryImages(
+      'https://lhscan.net/read-tate-no-yuusha-no-nariagari-raw-chapter-52.html',
+    );
   }
 }
 </script>
