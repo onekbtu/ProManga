@@ -10,8 +10,6 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 @Component
 export default class ImageByUrl extends Vue {
   @Prop() private url!: string;
-
-  @Prop() private url!: string;
 }
 </script>
 

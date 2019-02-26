@@ -17,15 +17,17 @@ import api from '../api'; // @ is an alias to /src
     },
   })
 export default class MangaDetails extends Vue {
-    primarySource!: string='';
+    primarySource: string='';
 
-    secondarySource!: string='';
+    secondarySource: string='';
 
     mounted() {
       this.primarySource = this.$route.query.primarySource;
       this.secondarySource = this.$route.query.secondarySource;
       this.primarySource = 'https://mangarock.com/manga/mrs-serie-100055928';
-      api.get(this.primarySource).then((response) => {
+      api.post('https://nwuo5irj2e.execute-api.us-east-2.amazonaws.com/stage1', {
+        url: 'https://mangarock.com/manga/mrs-serie-241688',
+      }).then((response) => {
         console.log(response);
       });
     }
