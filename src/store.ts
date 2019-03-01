@@ -6,6 +6,8 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    chapters: [],
+    currentChapter: -1,
     primaryImages: [''],
     secondaryImages: [''],
   },
@@ -16,6 +18,12 @@ export default new Vuex.Store({
     setSecondaryImages(state, images: [string]) {
       state.secondaryImages = images;
     },
+    setChapters(state, chapters) {
+      state.chapters = chapters;
+    },
+    setCurrentChapter(state, chapterIndex) {
+      state.currentChapter = chapterIndex;
+    }
   },
   actions: {
     getPrimaryImages({ commit }, url: string): void {

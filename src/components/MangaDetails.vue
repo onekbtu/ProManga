@@ -1,15 +1,32 @@
 <template>
   <div>
-    Select Chapter
-    <h1> {{ primarySource }} </h1>
-    <h1> {{ secondarySource }} </h1>
+    <h5><b> Select Chapter:</b>
+    </h5>
+    <div v-if="isLoading" class="progress">
+      <div class="indeterminate"></div>
+    </div>
+    <div v-else class="collection" style="overflow: auto; max-height: 95vh">
+      <div
+        v-for="(chapter, index) in chapters"
+        :key="index"
+        @click="selectChapter(index)">
+          <router-link
+            style="width: 100%; height: 100%;"
+            class="collection-item"
+            :to="{name: 'reader'}"
+          >
+            {{ chapter.mangarock.name }}
+          </router-link>
+        </div>
+    </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import ImageByUrl from '@/components/ImageByUrl.vue';
-import api from '../api'; // @ is an alias to /src
+import { Mutation, State } from 'vuex-class'; // @ is an alias to /src
+import api from '../api';
 
   @Component({
     components: {
@@ -17,19 +34,33 @@ import api from '../api'; // @ is an alias to /src
     },
   })
 export default class MangaDetails extends Vue {
-    primarySource: string='';
+    @Mutation('setChapters') setChapters;
 
-    secondarySource: string='';
+    @Mutation('setCurrentChapter') setCurrentChapter;
+
+    @State('chapters') chapters: [any];
+
+    primarySource: string = '';
+
+    secondarySource: string = '';
+
+    isLoading: boolean = false;
 
     mounted() {
       this.primarySource = this.$route.query.primarySource;
       this.secondarySource = this.$route.query.secondarySource;
-      this.primarySource = 'https://mangarock.com/manga/mrs-serie-100055928';
+      this.isLoading = true;
       api.post('https://nwuo5irj2e.execute-api.us-east-2.amazonaws.com/stage1', {
-        url: 'https://mangarock.com/manga/mrs-serie-241688',
+        mangarock_url: this.primarySource,
+        lhscan_url: this.secondarySource,
       }).then((response) => {
-        console.log(response);
+        this.isLoading = false;
+        this.setChapters(response.data);
       });
+    }
+
+    selectChapter(chapterIndex) {
+      this.setCurrentChapter(chapterIndex);
     }
 }
 </script>
@@ -39,14 +70,17 @@ export default class MangaDetails extends Vue {
   h3 {
     margin: 40px 0 0;
   }
+
   ul {
     list-style-type: none;
     padding: 0;
   }
+
   li {
     display: inline-block;
     margin: 0 10px;
   }
+
   a {
     color: #42b983;
   }
