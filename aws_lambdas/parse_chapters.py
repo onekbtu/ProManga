@@ -36,17 +36,17 @@ def parse_chapters_lhscan(url):
     
 
 def manga_chapters_union(first_manga_chapters, second_manga_chapters):
-    pattern_regex = 'Chapter \d+'
+    pattern_regexp = 'Chapter \d+'
 
     first_has = {}
     for chapter in first_manga_chapters:
-        match = re.search(pattern_regex, chapter['name'])
+        match = re.search(pattern_regexp, chapter['name'])
         if (match):
             first_has[match.group()] = chapter
     
     result = []
     for chapter in second_manga_chapters:
-        match = re.search(pattern_regex, chapter['name'])
+        match = re.search(pattern_regexp, chapter['name'])
         if (match and match.group() in first_has):
             result.append({
                 'mangarock': first_has[match.group()],
