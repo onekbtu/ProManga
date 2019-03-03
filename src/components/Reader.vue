@@ -1,29 +1,10 @@
 <template>
   <div class="hello"
   >
-    <ul>
-      <li v-for='(url, index) in primaryImages' :value='url' :key='index'
-          v-bind:style="{'display': index===currentImage ? 'block': 'none'}"
-      >
-        <ImageByUrl
-          :url='url'
-        >
-        </ImageByUrl>
-      </li>
-    </ul>
-    <ul>
-      <li v-for='(url, index) in secondaryImages' :value='url' :key='index'
-          v-bind:style="{'display': index===currentImage ? 'block': 'none'}"
-      >
-        <ImageByUrl
-          :url='url'
-        >
-        </ImageByUrl>
-      </li>
-    </ul>
-    <div @click="toggleSources" class="fixed-action-btn">
-      <a class="btn-floating btn-large red">
-        <i class="large material-icons">chrome_reader_mode</i>
+    <div id="lightgallery">
+      <a v-for='(url, index) in primaryImages'
+         target="_blank" :value='url' :key='index' :href="url">
+        <img src="asf" />
       </a>
     </div>
   </div>
@@ -33,6 +14,10 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
 import ImageByUrl from '@/components/ImageByUrl.vue';
+import 'lightgallery.js';
+import 'lightgallery.js/dist/css/lightgallery.css';
+import api from '../api';
+
 
 @Component({
   components: {
@@ -40,32 +25,27 @@ import ImageByUrl from '@/components/ImageByUrl.vue';
   },
 })
 export default class HelloWorld extends Vue {
-  @Action('getPrimaryImages') getPrimaryImages;
+  @State('chapters') chapters;
 
-  @Action('getSecondaryImages') getSecondaryImages;
-
-  @State('primaryImages') primaryImages: [string];
-
-  @State('secondaryImages') secondaryImages: [string];
-
-  mangaRockSource: string = '';
-
-  lhScanSource: string = '';
+  @State('currentChapter') currentChapter;
 
   currentImage: number = 0;
+
+  primaryImages: [string] = [];
+
+  secondaryImages: [string] = [];
 
   nextMangaPage() {
     this.currentImage += 1;
   }
 
   toggleSources() {
-    alert('toggled');
+    // alert('toggled');
+    this.currentImage += 1;
   }
 
   mounted() {
-    this.getPrimaryImages(
-      'https://api.mangarockhd.com/query/web401/pagesv2?oid=mrs-chapter-241689&country=Kazakhstan',
-    );
+    this.getMangaPages();
     window.onkeyup = (e) => {
       const key = e.keyCode ? e.keyCode : e.which;
 
@@ -75,9 +55,25 @@ export default class HelloWorld extends Vue {
         this.currentImage += 1;
       }
     };
-    this.getSecondaryImages(
-      'https://lhscan.net/read-tate-no-yuusha-no-nariagari-raw-chapter-52.html',
-    );
+  }
+
+  getMangaPages() {
+    console.log(this.chapters);
+    console.log(this.currentChapter);
+    api.post('https://pgo6canyzj.execute-api.us-east-2.amazonaws.com/v1/', {
+      mangarock_chapter_url: this.chapters[this.currentChapter].mangarock.url,
+      lhscan_chapter_url: this.chapters[this.currentChapter].lhscan.url,
+    }).then((response) => {
+      this.primaryImages = response.data.images_from_mangarock_chapter;
+      this.secondaryImages = response.data.images_from_lhscan_chapter;
+      this.$nextTick(() => {
+        lightGallery(document.getElementById('lightgallery'), {
+          closable: false,
+          download: false,
+          escKey: false,
+        });
+      });
+    });
   }
 }
 </script>
@@ -100,20 +96,4 @@ a {
   color: #42b983;
 }
 
-.float{
-  position:fixed;
-  width:60px;
-  height:60px;
-  bottom:40px;
-  right:40px;
-  background-color:#0C9;
-  color:#FFF;
-  border-radius:50px;
-  text-align:center;
-  box-shadow: 2px 2px 3px #999;
-}
-
-.my-float{
-  margin-top:22px;
-}
 </style>

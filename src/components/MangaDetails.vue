@@ -13,7 +13,7 @@
           <router-link
             style="width: 100%; height: 100%;"
             class="collection-item"
-            :to="{name: 'reader'}"
+            to="#"
           >
             {{ chapter.mangarock.name }}
           </router-link>
@@ -61,6 +61,7 @@ export default class MangaDetails extends Vue {
 
     selectChapter(chapterIndex) {
       this.setCurrentChapter(chapterIndex);
+      this.$router.push({ name: 'reader' });
     }
 }
 </script>

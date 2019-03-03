@@ -15,7 +15,9 @@ export default class ImageByUrl extends Vue {
 
 <style scoped>
   img {
-    height: 95vh;
+    width: 95vh;
+    margin-top: auto;
+    margin-bottom: auto;
     margin-left: auto;
     margin-right: auto;
   }
