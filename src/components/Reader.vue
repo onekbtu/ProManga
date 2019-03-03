@@ -1,12 +1,19 @@
 <template>
   <div class="hello"
   >
-    <div id="lightgallery">
+    <div id="lightgalleryPrimary" :hidden="!showPrimary">
       <a v-for='(url, index) in primaryImages'
          target="_blank" :value='url' :key='index' :href="url">
         <img src="asf" />
       </a>
     </div>
+    <div id="lightgallerySecondary" :hidden="showPrimary">
+      <a v-for='(url, index) in secondaryImages'
+         target="_blank" :value='url' :key='index' :href="url">
+        <img src="asf" />
+      </a>
+    </div>
+    <iframe :src="chapters[this.currentChapter].lhscan.url" hidden="true" frameborder="0"></iframe>
   </div>
 </template>
 
@@ -35,6 +42,8 @@ export default class HelloWorld extends Vue {
 
   secondaryImages: [string] = [];
 
+  showPrimary:boolean = true;
+
   nextMangaPage() {
     this.currentImage += 1;
   }
@@ -46,34 +55,46 @@ export default class HelloWorld extends Vue {
 
   mounted() {
     this.getMangaPages();
-    window.onkeyup = (e) => {
-      const key = e.keyCode ? e.keyCode : e.which;
-
-      if (key === 37) {
-        this.currentImage -= 1;
-      } else if (key === 39) {
-        this.currentImage += 1;
-      }
-    };
   }
 
   getMangaPages() {
-    console.log(this.chapters);
-    console.log(this.currentChapter);
     api.post('https://pgo6canyzj.execute-api.us-east-2.amazonaws.com/v1/', {
       mangarock_chapter_url: this.chapters[this.currentChapter].mangarock.url,
       lhscan_chapter_url: this.chapters[this.currentChapter].lhscan.url,
     }).then((response) => {
-      this.primaryImages = response.data.images_from_mangarock_chapter;
-      this.secondaryImages = response.data.images_from_lhscan_chapter;
+      this.secondaryImages = response.data.images_from_mangarock_chapter;
+      this.primaryImages = response.data.images_from_lhscan_chapter;
       this.$nextTick(() => {
-        lightGallery(document.getElementById('lightgallery'), {
+        const lgPrimary = document.getElementById('lightgalleryPrimary');
+        const lgSecondary = document.getElementById('lightgallerySecondary');
+        lgPrimary.addEventListener('onSlideClick', this.swapSources);
+        lgSecondary.addEventListener('onSlideClick', this.swapSources);
+        lightGallery(lgPrimary, {
+          closable: false,
+          download: false,
+          escKey: false,
+        });
+        lightGallery(lgSecondary, {
           closable: false,
           download: false,
           escKey: false,
         });
       });
     });
+  }
+
+  swapSources(event) {
+    const x = this.primaryImages;
+    this.primaryImages = this.secondaryImages;
+    this.secondaryImages = x;
+    const images = document.body.getElementsByClassName('lg-item');
+    Array.from(images).forEach((divImg, index) => {
+      const img = divImg.firstChild;
+      if (img) {
+        img.firstChild.src = this.primaryImages[index];
+      }
+    });
+    // this.showPrimary = !this.showPrimary;
   }
 }
 </script>
