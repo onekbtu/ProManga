@@ -7,12 +7,6 @@
         <img src="asf" />
       </a>
     </div>
-    <div id="lightgallerySecondary" :hidden="showPrimary">
-      <a v-for='(url, index) in secondaryImages'
-         target="_blank" :value='url' :key='index' :href="url">
-        <img src="asf" />
-      </a>
-    </div>
     <iframe :src="chapters[this.currentChapter].lhscan.url" hidden="true" frameborder="0"></iframe>
   </div>
 </template>
@@ -42,16 +36,11 @@ export default class HelloWorld extends Vue {
 
   secondaryImages: [string] = [];
 
+  offsetPrimary: number = 0;
+
+  offsetSecondary: number = 0;
+
   showPrimary:boolean = true;
-
-  nextMangaPage() {
-    this.currentImage += 1;
-  }
-
-  toggleSources() {
-    // alert('toggled');
-    this.currentImage += 1;
-  }
 
   mounted() {
     this.getMangaPages();
@@ -62,39 +51,80 @@ export default class HelloWorld extends Vue {
       mangarock_chapter_url: this.chapters[this.currentChapter].mangarock.url,
       lhscan_chapter_url: this.chapters[this.currentChapter].lhscan.url,
     }).then((response) => {
-      this.secondaryImages = response.data.images_from_mangarock_chapter;
-      this.primaryImages = response.data.images_from_lhscan_chapter;
+      this.primaryImages = response.data.images_from_mangarock_chapter;
+      this.secondaryImages = response.data.images_from_lhscan_chapter;
       this.$nextTick(() => {
         const lgPrimary = document.getElementById('lightgalleryPrimary');
-        const lgSecondary = document.getElementById('lightgallerySecondary');
         lgPrimary.addEventListener('onSlideClick', this.swapSources);
-        lgSecondary.addEventListener('onSlideClick', this.swapSources);
+        lgPrimary.addEventListener('onAfterOpen', () => {
+          const spanLeft = document.createElement('span');
+          spanLeft.innerHTML = '<i class="material-icons">chevron_left</i>';
+          const spanRight = document.createElement('span');
+          spanRight.innerHTML = '<i class="material-icons">chevron_right</i>';
+          const backButton = document.createElement('span');
+          backButton.innerText = 'Back to chapters';
+          spanLeft.classList.add('lg-icon');
+          spanRight.classList.add('lg-icon');
+          backButton.classList.add('lg-icon');
+          document.body.getElementsByClassName('lg-close')[0].hidden = true;
+          spanLeft.style = 'width: 50px;';
+          spanRight.style = 'width: 50px;';
+          backButton.style = 'width: 150px;font-size: 18px;';
+          spanLeft.addEventListener('click', () => {
+            this.offsetPrimary -= 1;
+            this.reloadSources();
+          });
+          spanRight.addEventListener('click', () => {
+            this.offsetPrimary += 1;
+            this.reloadSources();
+          });
+          backButton.addEventListener('click', () => {
+            window.lgData[lgPrimary.getAttribute('lg-uid')].destroy(true);
+            this.$router.back();
+          });
+          document.body.getElementsByClassName('lg-toolbar')[0].appendChild(spanRight);
+          document.body.getElementsByClassName('lg-toolbar')[0].appendChild(spanLeft);
+          document.body.getElementsByClassName('lg-toolbar')[0].appendChild(backButton);
+        });
         lightGallery(lgPrimary, {
           closable: false,
           download: false,
           escKey: false,
+          controls: false,
         });
-        lightGallery(lgSecondary, {
-          closable: false,
-          download: false,
-          escKey: false,
-        });
+        document.body.getElementsByTagName('img')[0].click();
       });
     });
   }
 
-  swapSources(event) {
-    const x = this.primaryImages;
-    this.primaryImages = this.secondaryImages;
-    this.secondaryImages = x;
+  swapSources() {
+    [this.primaryImages, this.secondaryImages] = [this.secondaryImages, this.primaryImages];
+    [this.offsetPrimary, this.offsetSecondary] = [this.offsetSecondary, this.offsetPrimary];
     const images = document.body.getElementsByClassName('lg-item');
     Array.from(images).forEach((divImg, index) => {
       const img = divImg.firstChild;
       if (img) {
-        img.firstChild.src = this.primaryImages[index];
+        const pos = Math.max(0, Math.min(
+          this.offsetPrimary + index,
+          this.primaryImages.length - 1,
+        ));
+        img.firstChild.src = this.primaryImages[pos];
       }
     });
-    // this.showPrimary = !this.showPrimary;
+  }
+
+  reloadSources() {
+    const images = document.body.getElementsByClassName('lg-item');
+    Array.from(images).forEach((divImg, index) => {
+      const img = divImg.firstChild;
+      if (img) {
+        const pos = Math.max(0, Math.min(
+          this.offsetPrimary + index,
+          this.primaryImages.length - 1,
+        ));
+        img.firstChild.src = this.primaryImages[pos];
+      }
+    });
   }
 }
 </script>

@@ -1,7 +1,8 @@
 <template>
   <div>
-    <h5><b> Select Chapter:</b>
-    </h5>
+    <h5><b> {{ mangaName }} </b> </h5>
+    <h6><b> Select Chapter:</b>
+    </h6>
     <div v-if="isLoading" class="progress">
       <div class="indeterminate"></div>
     </div>
@@ -13,7 +14,8 @@
           <router-link
             style="width: 100%; height: 100%;"
             class="collection-item"
-            to="#"
+            event=""
+            to=""
           >
             {{ chapter.mangarock.name }}
           </router-link>
@@ -40,6 +42,8 @@ export default class MangaDetails extends Vue {
 
     @State('chapters') chapters: [any];
 
+    mangaName: string = '';
+
     primarySource: string = '';
 
     secondarySource: string = '';
@@ -55,7 +59,8 @@ export default class MangaDetails extends Vue {
         lhscan_url: this.secondarySource,
       }).then((response) => {
         this.isLoading = false;
-        this.setChapters(response.data);
+        this.mangaName = response.data.manga_name;
+        this.setChapters(response.data.chapters);
       });
     }
 
