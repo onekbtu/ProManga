@@ -1,5 +1,5 @@
 import api from '@/api';
-import axios from "axios";
+import axios from 'axios';
 
 export interface Parser {
   (url: string): Promise<[string]>;

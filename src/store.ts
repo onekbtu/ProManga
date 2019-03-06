@@ -23,7 +23,7 @@ export default new Vuex.Store({
     },
     setCurrentChapter(state, chapterIndex) {
       state.currentChapter = chapterIndex;
-    }
+    },
   },
   actions: {
     getPrimaryImages({ commit }, url: string): void {
