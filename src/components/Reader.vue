@@ -56,6 +56,9 @@ export default class HelloWorld extends Vue {
       this.$nextTick(() => {
         const lgPrimary = document.getElementById('lightgalleryPrimary');
         lgPrimary.addEventListener('onSlideClick', this.swapSources);
+        lgPrimary.addEventListener('onBeforeSlide', (event) => {
+          this.reloadSources();
+        });
         lgPrimary.addEventListener('onAfterOpen', () => {
           const spanLeft = document.createElement('span');
           spanLeft.innerHTML = '<i class="material-icons">chevron_left</i>';
@@ -100,24 +103,18 @@ export default class HelloWorld extends Vue {
   swapSources() {
     [this.primaryImages, this.secondaryImages] = [this.secondaryImages, this.primaryImages];
     [this.offsetPrimary, this.offsetSecondary] = [this.offsetSecondary, this.offsetPrimary];
-    const images = document.body.getElementsByClassName('lg-item');
-    Array.from(images).forEach((divImg, index) => {
-      const img = divImg.firstChild;
-      if (img) {
-        const pos = Math.max(0, Math.min(
-          this.offsetPrimary + index,
-          this.primaryImages.length - 1,
-        ));
-        img.firstChild.src = this.primaryImages[pos];
-      }
-    });
+    this.reloadSources();
   }
 
   reloadSources() {
     const images = document.body.getElementsByClassName('lg-item');
     Array.from(images).forEach((divImg, index) => {
       const img = divImg.firstChild;
-      if (img) {
+      const pageIndex = parseInt(
+        document.getElementById('lg-counter-current').innerText,
+        10,
+      ) - 1;
+      if (img && index - 1 <= pageIndex && pageIndex <= index + 1) {
         const pos = Math.max(0, Math.min(
           this.offsetPrimary + index,
           this.primaryImages.length - 1,
@@ -129,7 +126,6 @@ export default class HelloWorld extends Vue {
 }
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
 h3 {
   margin: 40px 0 0;
