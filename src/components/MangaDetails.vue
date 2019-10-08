@@ -26,15 +26,10 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import ImageByUrl from '@/components/ImageByUrl.vue';
 import { Mutation, State } from 'vuex-class'; // @ is an alias to /src
 import api from '../api';
 
-  @Component({
-    components: {
-      ImageByUrl,
-    },
-  })
+@Component
 export default class MangaDetails extends Vue {
     @Mutation('setChapters') setChapters;
 

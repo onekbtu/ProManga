@@ -36,13 +36,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import ImageByUrl from '@/components/ImageByUrl.vue';
 
-  @Component({
-    components: {
-      ImageByUrl,
-    },
-  })
+@Component
 export default class HelloWorld extends Vue {
     mangaRockSource: string = '';
 
