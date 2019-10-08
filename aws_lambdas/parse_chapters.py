@@ -1,62 +1,70 @@
-import json
-from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup
 import requests
 import re
 
 
-def parse_chapters_mangarock(url):
-    page = requests.get(url)
-    content = BeautifulSoup(page.content, 'html.parser')
-    chapters_table = content.findAll('table')[1]
-
-    chapters = []
-    for a in chapters_table.find_all('a', href=True):
-        chapters.append({
-            'url': "{}{}".format("https://mangarock.com", a['href']),
-            'name': a.text,
-        })
-
+def chapters_from_mangarock(url: str) -> ():
+    response = requests.get(url=url)
+    response.raise_for_status()
+    content = BeautifulSoup(
+        response.content,
+        'html.parser'
+    )
+    table = content.find_all(name='table')[1]
+    links = table.find_all(name='a', href=True)
+    chapters = (
+        {
+            'url': f'{"https://mangarock.com"}{link.get("href")}',
+            'name': link.text
+        } for link in links
+    )
     return chapters
 
 
-def parse_chapters_lhscan(url):
-    page = requests.get(url)
-    content = BeautifulSoup(page.content, 'html.parser')
-    chapters_table = content.findAll('table')[0]
-
-    chapters = []
-    for a in chapters_table.find_all('a', href=True):
-        chapters.append({
-            'url': "{}{}".format("https://lhscan.net/", a['href']),
-            'name': a.text,
-        })
-
+def chapters_from_lhscan(url: str) -> ():
+    response = requests.get(
+        url=url
+    )
+    response.raise_for_status()
+    content = BeautifulSoup(
+        response.content,
+        'html.parser'
+    )
+    table = content.find_all(name='table')[0]
+    links = table.find_all(name='a', href=True)
+    chapters = (
+        {
+            'url': f'{"https://lhscan.net/"}{link.get("href")}',
+            'name': link.text
+        } for link in links
+    )
     return chapters
-    
 
-def manga_chapters_union(first_manga_chapters, second_manga_chapters):
-    pattern_regexp = 'Chapter \d+'
+
+def united_chapters(mangarock_chapters: (), lhscan_chapters: ()) -> ():
+    pattern = r'Chapter \d+'
 
     first_has = {}
-    for chapter in first_manga_chapters:
-        match = re.search(pattern_regexp, chapter['name'])
-        if (match):
+    for chapter in mangarock_chapters:
+        match = re.search(pattern, chapter['name'])
+        if match is not None:
             first_has[match.group()] = chapter
-    
+
     result = []
-    for chapter in second_manga_chapters:
-        match = re.search(pattern_regexp, chapter['name'])
-        if (match and match.group() in first_has):
-            result.append({
-                'mangarock': first_has[match.group()],
-                'lhscan': chapter,
-            })
-            
+    for chapter in lhscan_chapters:
+        match = re.search(pattern, chapter['name'])
+        if match is not None and match.group() in first_has:
+            result.append(
+                {
+                    'mangarock': first_has[match.group()],
+                    'lhscan': chapter,
+                }
+            )
     return result
 
+
 def lambda_handler(event, context):
-    mangarock_chapters = parse_chapters_mangarock(event['mangarock_url'])
-    lhscan_chapters = parse_chapters_lhscan(event['lhscan_url'])
-    
-    return manga_chapters_union(mangarock_chapters, lhscan_chapters)
+    return united_chapters(
+        mangarock_chapters=chapters_from_mangarock(url=event['mangarock_url']),
+        lhscan_chapters=chapters_from_lhscan(url=event['lhscan_url'])
+    )
