@@ -14,17 +14,13 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { Action, State } from 'vuex-class';
-import ImageByUrl from '@/components/ImageByUrl.vue';
 import 'lightgallery.js';
 import 'lightgallery.js/dist/css/lightgallery.css';
 import api from '../api';
+import decodeMangaImg from '../parsers';
 
 
-@Component({
-  components: {
-    ImageByUrl,
-  },
-})
+@Component
 export default class HelloWorld extends Vue {
   @State('chapters') chapters;
 
@@ -96,6 +92,7 @@ export default class HelloWorld extends Vue {
           controls: false,
         });
         document.body.getElementsByTagName('img')[0].click();
+        this.swapSources();
       });
     });
   }
@@ -119,7 +116,9 @@ export default class HelloWorld extends Vue {
           this.offsetPrimary + index,
           this.primaryImages.length - 1,
         ));
-        img.firstChild.src = this.primaryImages[pos];
+        decodeMangaImg(this.primaryImages[pos]).then((data) => {
+          img.firstChild.src = data;
+        });
       }
     });
   }

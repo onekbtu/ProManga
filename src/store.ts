@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import { getImagesFromLHScanByUrl, getImagesFromMangaRockByUrl } from '@/parsers';
+import { getImagesFromLHScanByUrl, getImagesFromMangaRockByUrl } from './parsers';
 
 Vue.use(Vuex);
 
