@@ -12,29 +12,11 @@ export default new Vuex.Store({
     secondaryImages: [''],
   },
   mutations: {
-    setPrimaryImages(state, images: [string]) {
-      state.primaryImages = images;
-    },
-    setSecondaryImages(state, images: [string]) {
-      state.secondaryImages = images;
-    },
     setChapters(state, chapters) {
       state.chapters = chapters;
     },
     setCurrentChapter(state, chapterIndex) {
       state.currentChapter = chapterIndex;
-    },
-  },
-  actions: {
-    getPrimaryImages({ commit }, url: string): void {
-      getImagesFromMangaRockByUrl(url).then((images: [string]) => {
-        commit('setPrimaryImages', images);
-      });
-    },
-    getSecondaryImages({ commit }, url: string): void {
-      getImagesFromLHScanByUrl(url).then((images: [string]) => {
-        commit('setSecondaryImages', images);
-      });
     },
   },
 });

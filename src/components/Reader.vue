@@ -12,8 +12,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { Action, State } from 'vuex-class';
+import { Component, Vue } from 'vue-property-decorator';
+import { State } from 'vuex-class';
 import 'lightgallery.js';
 import 'lightgallery.js/dist/css/lightgallery.css';
 import api from '../api';
