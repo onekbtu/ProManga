@@ -3,4 +3,4 @@
 ## Project setup
 ``` $ docker-compose up ```
 
-![Alt Text](https://gfycat.com/longterriblehypsilophodon)
+![gif](https://thumbs.gfycat.com/LongTerribleHypsilophodon-size_restricted.gif)
